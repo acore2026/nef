@@ -16,6 +16,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/free5gc/nef/internal/logger"
 	"github.com/free5gc/openapi/models"
+	"github.com/google/uuid"
 )
 
 const (
@@ -27,24 +28,25 @@ const (
 )
 
 const (
-	NefDefaultTLSKeyLogPath    = "./log/nefsslkey.log"
-	NefDefaultCertPemPath      = "./cert/nef.pem"
-	NefDefaultPrivateKeyPath   = "./cert/nef.key"
-	NefDefaultConfigPath       = "./config/nefcfg.yaml"
-	NefExpectedConfigVersion   = "1.0.1"
-	NefSbiDefaultIPv4          = "127.0.0.5"
-	NefSbiDefaultPort          = 8000
-	NefSbiDefaultScheme        = "https"
-	NefMetricsDefaultEnabled   = false
-	NefMetricsDefaultPort      = 9091
-	NefMetricsDefaultScheme    = "https"
-	NefMetricsDefaultNamespace = "free5gc"
-	NefDefaultNrfUri           = "https://127.0.0.10:8000"
-	TraffInfluResUriPrefix     = "/" + ServiceTraffInflu + "/v1"
-	PfdMngResUriPrefix         = "/" + ServicePfdMng + "/v1"
-	NefPfdMngResUriPrefix      = "/" + ServiceNefPfd + "/v1"
-	NefOamResUriPrefix         = "/" + ServiceNefOam + "/v1"
-	NefCallbackResUriPrefix    = "/" + ServiceNefCallback + "/v1"
+	NefDefaultTLSKeyLogPath      = "./log/nefsslkey.log"
+	NefDefaultCertPemPath        = "./cert/nef.pem"
+	NefDefaultPrivateKeyPath     = "./cert/nef.key"
+	NefDefaultConfigPath         = "./config/nefcfg.yaml"
+	NefExpectedConfigVersion     = "1.0.1"
+	NefDefaultNfInstanceIdEnvVar = "NEF_NF_INSTANCE_ID"
+	NefSbiDefaultIPv4            = "127.0.0.5"
+	NefSbiDefaultPort            = 8000
+	NefSbiDefaultScheme          = "https"
+	NefMetricsDefaultEnabled     = false
+	NefMetricsDefaultPort        = 9091
+	NefMetricsDefaultScheme      = "https"
+	NefMetricsDefaultNamespace   = "free5gc"
+	NefDefaultNrfUri             = "https://127.0.0.10:8000"
+	TraffInfluResUriPrefix       = "/" + ServiceTraffInflu + "/v1"
+	PfdMngResUriPrefix           = "/" + ServicePfdMng + "/v1"
+	NefPfdMngResUriPrefix        = "/" + ServiceNefPfd + "/v1"
+	NefOamResUriPrefix           = "/" + ServiceNefOam + "/v1"
+	NefCallbackResUriPrefix      = "/" + ServiceNefCallback + "/v1"
 )
 
 type Config struct {
@@ -82,11 +84,12 @@ type Info struct {
 }
 
 type Configuration struct {
-	Sbi         *Sbi `yaml:"sbi,omitempty" valid:"required"`
-	Metrics     *Metrics
-	NrfUri      string    `yaml:"nrfUri,omitempty" valid:"required"`
-	NrfCertPem  string    `yaml:"nrfCertPem,omitempty" valid:"optional"`
-	ServiceList []Service `yaml:"serviceList,omitempty" valid:"required"`
+	NfInstanceId string    `yaml:"nfInstanceId,omitempty" valid:"optional,uuidv4"`
+	Sbi          *Sbi      `yaml:"sbi,omitempty" valid:"required"`
+	Metrics      *Metrics  `yaml:"metrics,omitempty" valid:"optional"`
+	NrfUri       string    `yaml:"nrfUri,omitempty" valid:"required"`
+	NrfCertPem   string    `yaml:"nrfCertPem,omitempty" valid:"optional"`
+	ServiceList  []Service `yaml:"serviceList,omitempty" valid:"required"`
 }
 
 type Logger struct {
@@ -96,6 +99,10 @@ type Logger struct {
 }
 
 func (c *Configuration) validate() (bool, error) {
+	if c.NfInstanceId == "" {
+		c.NfInstanceId = uuid.New().String()
+	}
+
 	if sbi := c.Sbi; sbi != nil {
 		if result, err := sbi.validate(); err != nil {
 			return result, err
@@ -128,6 +135,31 @@ func (c *Configuration) validate() (bool, error) {
 	}
 	result, err := govalidator.ValidateStruct(c)
 	return result, appendInvalid(err)
+}
+
+func (c *Config) GetNfInstanceId() string {
+	c.RLock()
+	defer c.RUnlock()
+
+	var nfInstanceId string
+
+	logger.CfgLog.Debugf("Fetching nfInstanceId from env var \"%s\"", NefDefaultNfInstanceIdEnvVar)
+
+	if nfInstanceId = os.Getenv(NefDefaultNfInstanceIdEnvVar); nfInstanceId == "" {
+		logger.CfgLog.Debugf("No value found for \"%s\" env, fallback on config nfInstanceId : %s",
+			NefDefaultNfInstanceIdEnvVar, c.Configuration.NfInstanceId)
+		return c.Configuration.NfInstanceId
+	}
+
+	if err := uuid.Validate(nfInstanceId); err != nil {
+		logger.CfgLog.Errorf("Env var \"%s\" is not a valid uuid, "+
+			"fallback on configuration nfInstanceId : %s", NefDefaultNfInstanceIdEnvVar, c.Configuration.NfInstanceId)
+		return c.Configuration.NfInstanceId
+	}
+
+	logger.CfgLog.Debugf("nfInstanceId from %s : %s", NefDefaultNfInstanceIdEnvVar, nfInstanceId)
+
+	return nfInstanceId
 }
 
 type Sbi struct {

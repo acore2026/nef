@@ -9,7 +9,6 @@ import (
 	"github.com/free5gc/nef/pkg/factory"
 	"github.com/free5gc/openapi/models"
 	"github.com/free5gc/openapi/oauth"
-	"github.com/google/uuid"
 )
 
 type nef interface {
@@ -31,7 +30,7 @@ type NefContext struct {
 func NewContext(nef nef) (*NefContext, error) {
 	c := &NefContext{
 		nef:      nef,
-		nfInstID: uuid.New().String(),
+		nfInstID: nef.Config().GetNfInstanceId(),
 	}
 	c.afs = make(map[string]*AfData)
 	logger.CtxLog.Infof("New nfInstID: [%s]", c.nfInstID)
