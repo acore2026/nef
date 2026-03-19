@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/free5gc/nef/internal/logger"
-	"github.com/free5gc/openapi/models"
+	"github.com/acore2026/openapi/models"
 	"github.com/sirupsen/logrus"
 )
 

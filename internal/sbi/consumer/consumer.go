@@ -3,11 +3,11 @@ package consumer
 import (
 	"github.com/free5gc/nef/internal/logger"
 	"github.com/free5gc/nef/pkg/app"
-	"github.com/free5gc/openapi"
-	"github.com/free5gc/openapi/nrf/NFDiscovery"
-	"github.com/free5gc/openapi/nrf/NFManagement"
-	"github.com/free5gc/openapi/pcf/PolicyAuthorization"
-	"github.com/free5gc/openapi/udr/DataRepository"
+	"github.com/acore2026/openapi"
+	"github.com/acore2026/openapi/nrf/NFDiscovery"
+	"github.com/acore2026/openapi/nrf/NFManagement"
+	"github.com/acore2026/openapi/pcf/PolicyAuthorization"
+	"github.com/acore2026/openapi/udr/DataRepository"
 )
 
 type nef interface {

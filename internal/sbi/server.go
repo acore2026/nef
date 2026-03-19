@@ -13,9 +13,9 @@ import (
 	"github.com/free5gc/nef/internal/sbi/processor"
 	"github.com/free5gc/nef/pkg/app"
 	"github.com/free5gc/nef/pkg/factory"
-	"github.com/free5gc/util/httpwrapper"
-	logger_util "github.com/free5gc/util/logger"
-	"github.com/free5gc/util/metrics"
+	"github.com/acore2026/util/httpwrapper"
+	logger_util "github.com/acore2026/util/logger"
+	"github.com/acore2026/util/metrics"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )

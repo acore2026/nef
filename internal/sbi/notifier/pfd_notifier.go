@@ -9,10 +9,10 @@ import (
 	"sync"
 
 	"github.com/free5gc/nef/internal/logger"
-	// "github.com/free5gc/openapi/Nnef_PFDmanagement"
-	"github.com/free5gc/openapi/models"
-	"github.com/free5gc/openapi/nef/PFDmanagement"
-	sbi_metrics "github.com/free5gc/util/metrics/sbi"
+	// "github.com/acore2026/openapi/Nnef_PFDmanagement"
+	"github.com/acore2026/openapi/models"
+	"github.com/acore2026/openapi/nef/PFDmanagement"
+	sbi_metrics "github.com/acore2026/util/metrics/sbi"
 )
 
 type PfdChangeNotifier struct {

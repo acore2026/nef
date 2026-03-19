@@ -1,7 +1,7 @@
 package logger
 
 import (
-	logger_util "github.com/free5gc/util/logger"
+	logger_util "github.com/acore2026/util/logger"
 	"github.com/sirupsen/logrus"
 )
 

@@ -12,8 +12,8 @@ import (
 	"github.com/free5gc/nef/internal/logger"
 	"github.com/free5gc/nef/pkg/factory"
 	nefapp "github.com/free5gc/nef/pkg/service"
-	logger_util "github.com/free5gc/util/logger"
-	"github.com/free5gc/util/version"
+	logger_util "github.com/acore2026/util/logger"
+	"github.com/acore2026/util/version"
 	"github.com/urfave/cli/v2"
 )
 

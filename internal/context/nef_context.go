@@ -7,8 +7,8 @@ import (
 
 	"github.com/free5gc/nef/internal/logger"
 	"github.com/free5gc/nef/pkg/factory"
-	"github.com/free5gc/openapi/models"
-	"github.com/free5gc/openapi/oauth"
+	"github.com/acore2026/openapi/models"
+	"github.com/acore2026/openapi/oauth"
 )
 
 type nef interface {
